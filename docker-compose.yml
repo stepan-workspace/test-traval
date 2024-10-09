@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    container_name: test-traval-app
+    volumes:
+      - ./app/:/var/www/app
+    ports:
+      - "9000:9000"
+    networks:
+      - test-traval
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: test-traval-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app/:/var/www/app
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - php
+    networks:
+      - test-traval
+
+networks:
+  test-traval:
+    driver: bridge
