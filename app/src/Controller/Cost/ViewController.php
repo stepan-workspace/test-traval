@@ -6,6 +6,7 @@ namespace App\Controller\Cost;
 
 use App\DTO\Builder\CostViewDTOBuilder;
 use App\DTO\Request\CostViewDTO;
+use App\Service\CostService\Handle\DiscountHandle;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,6 +20,7 @@ class ViewController extends AbstractController
 {
     public function __construct(
         private ValidatorInterface $validator,
+        private DiscountHandle $discountHandle,
     ) {}
 
     /**
@@ -63,11 +65,11 @@ class ViewController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
 
-
+        $this->discountHandle->request($requestDTO);
 
         return new JsonResponse([
             'status' => 'success',
-            'cost' => 0000,
+            'cost' => $this->discountHandle->getFinalCost(),
         ], Response::HTTP_OK);
     }
 }
