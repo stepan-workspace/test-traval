@@ -21,7 +21,20 @@
 
 ## Команды:
 
-- Развёртывание и запуск проекта
-```bash
-$ docker-compose up --build -d
-```
+- Развёртывание и запуск
+    ```bash
+    $ docker-compose up --build -d
+    ```
+
+    ```bash
+    $ docker exec test-traval-app composer update
+    ```
+
+    ```bash
+    $ docker exec test-traval-app chown -R www-data:www-data var/
+    ```
+
+- Документация API
+
+    [http://localhost:8080/api/doc](http://localhost:8080/api/doc)
+    
