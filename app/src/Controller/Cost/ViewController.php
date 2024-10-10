@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use OpenApi\Attributes;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -27,26 +27,45 @@ class ViewController extends AbstractController
      * Получить стоимость путешествия.
      */
     #[Route('/api/traval/cost', name: 'travel_cost', methods: ['GET'])]
-    #[Attributes\RequestBody(
+    #[OA\RequestBody(
         required: true,
-        content: new Attributes\JsonContent(
+        content: new OA\JsonContent(
             ref: new Model(type: CostViewDTO::class)
         )
     )]
-    #[Attributes\Response(
+    #[OA\Response(
         response: 200,
         description: 'Success',
-        content: new Attributes\JsonContent(
+        content: new OA\JsonContent(
             properties: [
-                new Attributes\Property(property: 'cost', type: 'integer')
+                new OA\Property(property: 'status', type: 'string'),
+                new OA\Property(property: 'cost', type: 'integer')
             ]
         )
     )]
-    #[Attributes\Response(
+    #[OA\Response(
         response: 400,
         description: 'Во входных данных есть ошибки',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'data', type: 'object', nullable: true, example: null),
+                new OA\Property(
+                    property: 'errors',
+                    type: 'array',
+                    items: new OA\Items(
+                        properties: [
+                            new OA\Property(property: 'field', type: 'string'),
+                            new OA\Property(property: 'message', type: 'string')
+                        ]
+                    )
+                ),
+            ]
+        )
     )]
-    #[Attributes\Tag(name: 'Cost')]
+    #[OA\Response(
+        response: 404,
+        description: 'Маршрут не найден или не существует',    )]
+    #[OA\Tag(name: 'Cost')]
     public function view(Request $request): JsonResponse
     {
         $requestDTO = CostViewDTOBuilder::build(
@@ -55,7 +74,10 @@ class ViewController extends AbstractController
 
         $errors = [];
         foreach ($this->validator->validate($requestDTO) as $error) {
-            $errors[] = $error->getMessage();
+            $errors[] = [
+                'field' => $error->getPropertyPath(),
+                'message' => $error->getMessage()
+            ];
         }
 
         if (!empty($errors)) {
