@@ -37,4 +37,9 @@
 - Документация API
 
     [http://localhost:8080/api/doc](http://localhost:8080/api/doc)
-    
+
+- Запуск тестов
+
+    ```bash
+    $ docker exec test-traval-app bash -c 'php bin/phpunit'
+    ```
