@@ -25,7 +25,7 @@ class CostViewDTO
         pattern: '/^\d+$/',
         message: "Базовая стоимость должна содержать только цифры"
     )]
-    private int|string|null $baseCost;
+    private int|float|string|null $baseCost;
 
     #[Attributes\Property(
         description: 'Дата рождения участника',
@@ -75,12 +75,12 @@ class CostViewDTO
     )]
     private string|null $datePayment = null;
 
-    public function getBaseCost(): int
+    public function getBaseCost(): float
     {
-        return $this->baseCost;
+        return (float)$this->baseCost;
     }
 
-    public function setBaseCost(int|string|null $baseCost): self
+    public function setBaseCost(int|float|string|null $baseCost): self
     {
         $this->baseCost = $baseCost;
 
